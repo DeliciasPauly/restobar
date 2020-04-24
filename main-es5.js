@@ -834,7 +834,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "environment", function() { return environment; });
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 var g = {
-    apiHost: 'http://localhost',
+    apiHost: 'http://ec2-18-219-138-186.us-east-2.compute.amazonaws.com',
     apiPort: ':3000',
     apiPath: '/api'
 };
