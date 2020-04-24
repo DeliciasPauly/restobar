@@ -619,6 +619,8 @@ var SaleOrderComponent = /** @class */ (function () {
         var saleOrderDetailList = [];
         saleOrder.sale_id = 0;
         saleOrder.table_name = this.selectedTable.table_name;
+        saleOrder.status = 'PENDING';
+        saleOrder.total_sale = 0;
         this.saleOrderList.forEach(function (data) {
             var saleOrderDetail = new _models_sale_order_detail_model__WEBPACK_IMPORTED_MODULE_9__["SaleOrderDetail"]();
             saleOrderDetail.sale_detail_id = 0;
