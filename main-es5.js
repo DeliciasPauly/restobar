@@ -775,22 +775,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../environments/environment */ "./src/environments/environment.ts");
+
 
 
 
 var SalesService = /** @class */ (function () {
     function SalesService(http) {
         this.http = http;
-        this.serviceProtocol = 'http://';
-        this.serviceHost = 'localhost:3000';
-        this.contextPath = '/api';
     }
     SalesService.prototype.getHeader = function () {
         var headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpHeaders"]().set('Content-Type', 'application/json');
         return headers;
     };
     SalesService.prototype.urlService = function (path) {
-        return this.serviceProtocol + this.serviceHost + this.contextPath + path;
+        console.log('REST:' + _environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].endpoints.host);
+        return _environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].endpoints.host + _environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].endpoints.port + _environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].endpoints.path + path;
     };
     SalesService.prototype.getAllTables = function () {
         return this.http.get(this.urlService('/table'), { headers: this.getHeader() });
@@ -832,20 +832,20 @@ var SalesService = /** @class */ (function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "environment", function() { return environment; });
-// This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
-var environment = {
-    production: false
+var g = {
+    apiHost: 'http://localhost',
+    apiPort: ':3000',
+    apiPath: '/api'
 };
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+var environment = {
+    production: false,
+    endpoints: {
+        host: g.apiHost,
+        port: g.apiPort,
+        path: g.apiPath
+    }
+};
 
 
 /***/ }),
