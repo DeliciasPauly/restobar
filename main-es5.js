@@ -206,6 +206,32 @@ var AppModule = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/models/product.model.ts":
+/*!*****************************************!*\
+  !*** ./src/app/models/product.model.ts ***!
+  \*****************************************/
+/*! exports provided: Product */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Product", function() { return Product; });
+var Product = /** @class */ (function () {
+    function Product(product_name, price) {
+        this.product_name = product_name;
+        this.price = price;
+    }
+    Product.ctorParameters = function () { return [
+        { type: String },
+        { type: Number }
+    ]; };
+    return Product;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/models/sale-order-detail.model.ts":
 /*!***************************************************!*\
   !*** ./src/app/models/sale-order-detail.model.ts ***!
@@ -544,8 +570,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
 /* harmony import */ var _sales_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../sales.service */ "./src/app/modules/sales/sales.service.ts");
 /* harmony import */ var _models_table_model__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../models/table.model */ "./src/app/models/table.model.ts");
-/* harmony import */ var _models_sale_order_model__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../models/sale-order.model */ "./src/app/models/sale-order.model.ts");
-/* harmony import */ var _models_sale_order_detail_model__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../models/sale-order-detail.model */ "./src/app/models/sale-order-detail.model.ts");
+/* harmony import */ var _models_product_model__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../models/product.model */ "./src/app/models/product.model.ts");
+/* harmony import */ var _models_sale_order_model__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../models/sale-order.model */ "./src/app/models/sale-order.model.ts");
+/* harmony import */ var _models_sale_order_detail_model__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../models/sale-order-detail.model */ "./src/app/models/sale-order-detail.model.ts");
+
 
 
 
@@ -586,15 +614,6 @@ var SaleOrderComponent = /** @class */ (function () {
         this.getAllTables();
         this.getAllProducts();
     };
-    SaleOrderComponent.prototype.addProduct = function (product) {
-        //console.log('product: ', product );
-        this.saleOrderList.push(product);
-        this.productCtrl.setValue('');
-    };
-    SaleOrderComponent.prototype.deleteProduct = function (product) {
-        //console.log('product: ', product );
-        this.saleOrderList = this.saleOrderList.filter(function (x) { return x != product; });
-    };
     SaleOrderComponent.prototype.getAllTables = function () {
         var _this = this;
         this.salesService.getAllTables().subscribe(function (data) {
@@ -612,17 +631,38 @@ var SaleOrderComponent = /** @class */ (function () {
     SaleOrderComponent.prototype.addOrder = function (table) {
         //console.log('addOrder: '+JSON.stringify(table)); 
         this.selectedTable.table_name = table;
+        this.saleOrderList = [];
+        this.getPendingOrderTable(table);
+    };
+    SaleOrderComponent.prototype.getPendingOrderTable = function (table) {
+        var _this = this;
+        this.salesService.getPendingOrderTable(table).subscribe(function (data) {
+            // recorremos el array detalle de orden
+            data.forEach(function (object) {
+                var product = new _models_product_model__WEBPACK_IMPORTED_MODULE_8__["Product"](object.product_name, object.price);
+                _this.addProduct(product);
+            });
+        });
+    };
+    SaleOrderComponent.prototype.addProduct = function (product) {
+        //console.log('product: ', product );
+        this.saleOrderList.push(product);
+        this.productCtrl.setValue('');
+    };
+    SaleOrderComponent.prototype.deleteProduct = function (product) {
+        //console.log('product: ', product );
+        this.saleOrderList = this.saleOrderList.filter(function (x) { return x != product; });
     };
     SaleOrderComponent.prototype.sendSaleOrder = function () {
         var _this = this;
-        var saleOrder = new _models_sale_order_model__WEBPACK_IMPORTED_MODULE_8__["SaleOrder"]();
+        var saleOrder = new _models_sale_order_model__WEBPACK_IMPORTED_MODULE_9__["SaleOrder"]();
         var saleOrderDetailList = [];
         saleOrder.sale_id = 0;
         saleOrder.table_name = this.selectedTable.table_name;
         saleOrder.status = 'PENDING';
         saleOrder.total_sale = 0;
         this.saleOrderList.forEach(function (data) {
-            var saleOrderDetail = new _models_sale_order_detail_model__WEBPACK_IMPORTED_MODULE_9__["SaleOrderDetail"]();
+            var saleOrderDetail = new _models_sale_order_detail_model__WEBPACK_IMPORTED_MODULE_10__["SaleOrderDetail"]();
             saleOrderDetail.sale_detail_id = 0;
             saleOrderDetail.sale_id = 0;
             saleOrderDetail.product_name = data.product_name;
@@ -805,6 +845,11 @@ var SalesService = /** @class */ (function () {
     };
     SalesService.prototype.putSaleOrder = function (saleOrder) {
         return this.http.put(this.urlService('/sales'), saleOrder, { headers: this.getHeader() });
+    };
+    SalesService.prototype.getPendingOrderTable = function (table) {
+        if ("" != table.trim()) {
+            return this.http.get(this.urlService('/sales/' + table), { headers: this.getHeader() });
+        }
     };
     SalesService.prototype.getPendingOrder = function () {
         return this.http.get(this.urlService('/sales'), { headers: this.getHeader() });
